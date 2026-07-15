@@ -1,0 +1,113 @@
+function Duty_cycle  = PandO_Core_12bit(V_D_in, I_D_in)
+%#codegen
+
+    % ------------------------------------------------------------
+    % RTL-oriented MPPT core
+    % Inputs:
+    %   V_D_in : 12-bit digitized PV voltage, 0...4095
+    %   I_D_in : 12-bit digitized PV current, 0...4095
+    %
+    % Outputs:
+    %   Duty_cycle : normalized duty cycle, 0...0.95
+    %   slope      : adaptive duty perturbation step
+    % ------------------------------------------------------------
+
+    M = 12;      % ADC resolution
+    N = 8;       % Duty-cycle fractional resolution
+
+    time_temp = int32(400);
+
+    P_EPS  = int32(round(0.000001 * 2^20));
+
+    D_MIN  = int32(round(0.01 * 2^N));
+    D_INIT = int32(round(0.05 * 2^N));
+    D_MAX  = int32(round(0.95 * 2^N));
+
+    K = int32(round(0.004 * 2^10));
+
+    % Convert 12-bit unsigned inputs to signed internal arithmetic
+    V_D = int32(V_D_in);
+    I_D = int32(I_D_in);
+
+    persistent Pprev Vprev Dprev time_step dpdv delta_P_prev deltaD
+
+    if isempty(Pprev)
+
+        Dprev = D_INIT;
+
+        Vprev = V_D;
+
+        % Power estimate:
+        % V_D and I_D are Q12-normalized digital values.
+        % Product is scaled back by 2^12.
+        Pprev = int32(round(double(V_D * I_D) / 2^M));
+
+        delta_P_prev = int32(0);
+        time_step    = time_temp;
+        dpdv         = int32(0);
+        deltaD       = int32(0);
+
+    end
+
+    time_step = time_step - 1;
+
+    if time_step == 0
+
+        time_step = time_temp;
+
+        Ppv = int32(round(double(V_D * I_D) / 2^M));
+
+        delta_P = Ppv - Pprev;
+        delta_V = V_D - Vprev;
+
+        if delta_V == 0
+            dpdv = int32(0);
+        else
+            dpdv = int32(round(double(delta_P * 2^M) / double(delta_V)));
+        end
+
+        if abs(delta_P_prev - delta_P) * 2^M < P_EPS
+
+            deltaD = int32(0);
+
+        else
+
+            deltaD = int32(round(double(abs(dpdv) * K) / 2^14));
+
+            % This limits the perturbation step.
+            % If this is intended as a maximum step, the name D_MIN
+            % should later be changed to D_STEP_MAX.
+            deltaD = min(deltaD, D_MIN);
+
+        end
+
+        % Perturb and Observe logic
+        if V_D <= 0
+
+            D = D_INIT;
+
+        elseif dpdv > 0
+
+            D = Dprev - deltaD;
+
+        else
+
+            D = Dprev + deltaD;
+
+        end
+
+        % Saturate duty-cycle command
+        D = max(int32(0), min(D_MAX, D));
+
+        % Update memory registers
+        Vprev        = V_D;
+        Pprev        = Ppv;
+        Dprev        = D;
+        delta_P_prev = delta_P;
+
+    end
+
+    Duty_cycle = double(Dprev) / 2^N;
+    %slope      = double(deltaD);
+
+end

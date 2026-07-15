@@ -1,0 +1,79 @@
+function [Duty_cycle, slope]  = PandO(Vpv, Ipv) 
+        time_temp  = 400;
+        M          = 10;
+	    N	       = 8;
+        I_FS       = 0.7;
+        V_FS       = 0.7;
+        
+        P_EPS      = round(0.000001*2^20);  
+        D_MIN      = round(0.01*256);
+        D_INIT     = round(0.05*256);
+        D_MAX      = round(0.95*256);
+        K          = round(0.004*2^10); 
+
+        P_LSB      = ((V_FS/(2^M))*(I_FS/(2^M)));
+   %     I_D        = (round((Ipv/I_FS)*(2^M))/(2^M))*I_FS;
+    %    V_D        = (round((Vpv/V_FS)*(2^M))/(2^M))*V_FS;
+
+         I_D        = round(Ipv/I_FS * (2^M));
+         V_D        = round(Vpv/V_FS * (2^M ));
+
+    persistent Pprev Vprev Dprev time_step dpdv delta_P_prev deltaD
+    if isempty(Pprev)  
+      % Dprev      = 0.05;
+        Dprev      = round(0.05*256);
+        Vprev      = V_D; 
+        Pprev      = round((V_D * I_D)/2^10); 
+        delta_P_prev = 0;
+        time_step  = time_temp;   
+        dpdv       = 0;
+        deltaD     = 0;
+    end 
+
+    time_step = time_step - 1; 
+    if time_step == 0 
+        time_step  = time_temp; % Reset time step 
+
+        Ppv        = round((V_D * I_D)/2^10); 
+        delta_P    = Ppv - Pprev; 
+        delta_V    = V_D - Vprev;
+
+if delta_V == 0
+    dpdv = 0;
+else
+    dpdv = round((delta_P * 2^10) / delta_V);
+end
+
+
+
+       if (abs(delta_P_prev - delta_P)*2^10) < P_EPS
+            deltaD = 0.0;
+        else
+            %deltaD     = abs(dpdv )*0.009; 
+             deltaD     = round((abs(dpdv)*K)/2^12); 
+            deltaD     = min(deltaD,D_MIN);
+            
+        end
+
+
+
+        % Perturb and Observe algorithm 
+      if Vpv < 0.0
+            D = D_INIT;
+      elseif dpdv > 0
+            D = Dprev - deltaD;
+      else
+            D = Dprev + deltaD;       
+      end 
+ 
+        D     = max(0, min(D_MAX, D)); 
+ 
+        % Update previous values 
+        Vprev     = V_D; 
+        Pprev      = Ppv; 
+        Dprev     = D;
+        delta_P_prev = delta_P;
+    end 
+         Duty_cycle = double(Dprev) / 2^N;
+        slope     = deltaD ;
+end
