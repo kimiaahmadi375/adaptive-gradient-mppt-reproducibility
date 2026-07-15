@@ -12,6 +12,7 @@ version: 1.0.0
 date-released: 2026-07-15
 repository-code: "https://github.com/kimiaahmadi375/adaptive-gradient-mppt-reproducibility/new/main"
 license: MIT
+doi: 10.5281/zenodo.21375279
 abstract: >
   Custom implementation and simulation data supporting the manuscript
   Adaptive Gradient Descent-Based Maximum Power Point Tracking Algorithm
