@@ -1,25 +1,51 @@
-# Simulation data
+# Adaptive Gradient MPPT Reproducibility Package
 
-This folder contains the MATLAB simulation data and input profiles supporting the results reported in the manuscript:
+This repository contains the custom algorithm implementation and simulation data supporting the manuscript:
 
 **Adaptive Gradient Descent–Based Maximum Power Point Tracking Algorithm for Low-Power Photovoltaic Systems with Complexity-Aware Performance Analysis**
 
-## Contents
+Authors: Kimia Ahmadi and Wouter A. Serdijn  
+Affiliation: Department of Microelectronics, Delft University of Technology, The Netherlands
 
-The deposited files include:
+## Repository contents
 
-- irradiance Profile 1 with abrupt step changes;
-- irradiance Profile 2 based on the EN50530 dynamic test;
-- processed motion-derived irradiance Profile 3;
-- partial-shading test conditions;
+### `code`
+
+This folder contains the text implementation of the proposed adaptive gradient-descent-based perturb-and-observe MPPT algorithm, including:
+
+- analytical power–voltage gradient evaluation;
+- adaptive duty-cycle step calculation;
+- threshold-based perturbation suppression;
+- optional initialization routine for partial-shading conditions.
+
+### `simulation_data`
+
+This folder contains the MATLAB simulation data supporting the manuscript, including:
+
+- irradiance input profiles;
+- partial-shading scenarios;
 - temperature-variation profiles;
-- photovoltaic and converter simulation parameters;
-- numerical MATLAB simulation outputs supporting the reported results.
+- PV and converter parameters;
+- controller parameters;
+- numerical simulation results.
 
-## Data format
+## Software
 
-Most numerical data are provided in MATLAB `.mat` format. The file `simulation_parameters.txt` describes the principal simulation and controller settings.
+The simulations were performed using MATLAB and Simulink.
 
-## Third-party data
+## Related benchmarking materials
 
-The original rodent-motion measurements are not redistributed in this repository. Only the processed irradiance profile used as a simulation input in the present study is included. The source of the original measurements is cited in the associated manuscript.
+Pseudocode representations of selected reference MPPT algorithms and the computational-complexity benchmarking methodology are available separately through Zenodo:
+
+https://doi.org/10.5281/zenodo.18198514
+
+## Citation
+
+A permanent DOI for this repository will be provided through Zenodo following the archival of the first GitHub release.
+
+## Contact
+
+Kimia Ahmadi  
+Department of Microelectronics  
+Delft University of Technology  
+Email: k.Ahmadi@tudelft.nl
