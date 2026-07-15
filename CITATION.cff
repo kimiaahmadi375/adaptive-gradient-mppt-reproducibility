@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "Please cite this software and dataset using the citation below."
+title: "Adaptive Gradient MPPT Reproducibility Package"
+type: software
+authors:
+  - family-names: Ahmadi
+    given-names: Kimia
+  - family-names: Serdijn
+    given-names: Wouter A.
+affiliation: "Department of Microelectronics, Delft University of Technology, The Netherlands"
+version: 1.0.0
+date-released: 2026-07-15
+repository-code: "https://github.com/kimiaahmadi375/adaptive-gradient-mppt-reproducibility/new/main"
+license: MIT
+abstract: >
+  Custom implementation and simulation data supporting the manuscript
+  Adaptive Gradient Descent-Based Maximum Power Point Tracking Algorithm
+  for Low-Power Photovoltaic Systems with Complexity-Aware Performance Analysis.
+keywords:
+  - maximum power point tracking
+  - MPPT
+  - photovoltaic systems
+  - gradient descent
+  - perturb and observe
+  - computational complexity
