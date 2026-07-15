@@ -41,7 +41,11 @@ https://doi.org/10.5281/zenodo.18198514
 
 ## Citation
 
-A permanent DOI for this repository will be provided through Zenodo following the archival of the first GitHub release.
+The archived version of this reproducibility package is available via Zenodo:
+
+https://doi.org/10.5281/zenodo.21375280
+
+
 
 ## Contact
 
